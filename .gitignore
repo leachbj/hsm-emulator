@@ -6,3 +6,4 @@ target/
 *.iml
 *.iws
 .DS_Store
+.cache
