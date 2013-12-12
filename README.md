@@ -9,6 +9,9 @@ The simulator runs as a java process
 
   java -jar hsmsim.jar
 
+Alternatively the simulator can be deployed as a web application, deploy the hsmsim-war.war to a suitable
+servlet container.
+
 ## Contributing
 
 The simulator supports a very small number of commands and only supports the test LMKs.  Contributions of

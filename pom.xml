@@ -8,6 +8,7 @@
 	<name>hsmsim</name>
 	<modules>
 		<module>hsmsim-akka</module>
+		<module>hsmsim-war</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
