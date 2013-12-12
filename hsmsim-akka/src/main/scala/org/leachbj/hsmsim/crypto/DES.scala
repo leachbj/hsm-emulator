@@ -83,9 +83,9 @@ object DES {
   private def tripleDesWithVariant(cryptoOp: CryptoOp, lmkKey: Array[Byte], key: Array[Byte]): Array[Byte] = {
     val variant = if (key.length == 24) tripleVariants else doubleVariants
 
-    val d = for (i <- 0 until (key.length, 8))
-      yield cryptoOp(applyVariant(lmkKey, variant(i / 8)), key.slice(i, i + 8))
-
+    val d = for ((key, index) <- key.grouped(8).zipWithIndex)
+      yield cryptoOp(applyVariant(lmkKey, variant(index)), key)
+    
     d.flatten.toArray
   }
 
