@@ -123,38 +123,45 @@ class HsmSimulator extends Actor with ActorLogging {
 /**
  * Receives [[HsmRequest]] commands and responds with [[HsmResponse]] responses back to the sender.
  */
-class HsmHandler(init: Init[WithinActorContext, HsmResponse, HsmRequest]) extends Actor {
+class HsmHandler(init: Init[WithinActorContext, HsmResponse, HsmRequest]) extends Actor with ActorLogging {
   def receive: Receive = {
     case init.Event(default) =>
-      println("Received command: " + default)
-      default match {
-        case t: TranslatePinZpkToAnotherRequest =>
-          sender ! init.Command(TranslatePinZpkToAnotherResponse.createResponse(t))
-        case i: ImportDesKeyRequest =>
-          sender ! init.Command(ImportDesKeyResponse.createResponse(i))
-        case g: GenerateRandomPinRequest =>
-          sender ! init.Command(GenerateRandomPinResponse("00", "12345"))
-        case v: VerifyInterchangePinIBMRequest =>
-          sender ! init.Command(VerifyInterchangePinIBMResponse.createResponse(v))
-        case translatePin: TranslatePinZpkToLmkRequest =>
-          sender ! init.Command(TranslatePinZpkToLmkResponse.createResponse(translatePin))
-        case generateOffset: GenerateIBMPinOffsetRequest =>
-          sender ! init.Command(GenerateIBMPinOffsetResponse.createResponse(generateOffset))
-        case translateZpk: TranslateZpkFromZmkToLmkRequest =>
-          sender ! init.Command(TranslateZpkFromZmkToLmkResponse.createResponse(translateZpk))
-        case generateZpk: GenerateZpkRequest =>
-          sender ! init.Command(GenerateZpkResponse.createResponse(generateZpk))
-        case generateMac: GenerateMacRequest =>
-          sender ! init.Command(GenerateMacResponse.createResponse(generateMac))
-        case generateRsa: GenerateRSAKeySetRequest =>
-          sender ! init.Command(GenerateRSAKeySetResponse.createResponse(generateRsa))
-        case unknown: UnknownHsmRequest =>
-          println("Unknown command type " + unknown.cmd)
-          val responseCode = "" + unknown.cmd.charAt(0) + (unknown.cmd.charAt(1) + 1)
-          sender ! init.Command(ErrorResponse(responseCode, "99"))
-        case _ =>
-          println("Unhandled message!")
-      }
+      log.debug("Received command: {}", default)
+      val processor = context.actorOf(Props(new RequestProcessor(init)))
+      processor.forward(default)
+    case _ =>
+      log.error("Unhandled message!")
+  }
+}
+
+class RequestProcessor(init: Init[WithinActorContext, HsmResponse, HsmRequest]) extends Actor with ActorLogging {
+  def receive: Receive = {
+    case t: TranslatePinZpkToAnotherRequest =>
+      sender ! init.Command(TranslatePinZpkToAnotherResponse.createResponse(t))
+    case i: ImportDesKeyRequest =>
+      sender ! init.Command(ImportDesKeyResponse.createResponse(i))
+    case g: GenerateRandomPinRequest =>
+      sender ! init.Command(GenerateRandomPinResponse("00", "12345"))
+    case v: VerifyInterchangePinIBMRequest =>
+      sender ! init.Command(VerifyInterchangePinIBMResponse.createResponse(v))
+    case translatePin: TranslatePinZpkToLmkRequest =>
+      sender ! init.Command(TranslatePinZpkToLmkResponse.createResponse(translatePin))
+    case generateOffset: GenerateIBMPinOffsetRequest =>
+      sender ! init.Command(GenerateIBMPinOffsetResponse.createResponse(generateOffset))
+    case translateZpk: TranslateZpkFromZmkToLmkRequest =>
+      sender ! init.Command(TranslateZpkFromZmkToLmkResponse.createResponse(translateZpk))
+    case generateZpk: GenerateZpkRequest =>
+      sender ! init.Command(GenerateZpkResponse.createResponse(generateZpk))
+    case generateMac: GenerateMacRequest =>
+      sender ! init.Command(GenerateMacResponse.createResponse(generateMac))
+    case generateRsa: GenerateRSAKeySetRequest =>
+      sender ! init.Command(GenerateRSAKeySetResponse.createResponse(generateRsa))
+    case unknown: UnknownHsmRequest =>
+      println("Unknown command type " + unknown.cmd)
+      val responseCode = "" + unknown.cmd.charAt(0) + (unknown.cmd.charAt(1) + 1)
+      sender ! init.Command(ErrorResponse(responseCode, "99"))
+    case _ =>
+      println("Unhandled message!")
   }
 }
 
