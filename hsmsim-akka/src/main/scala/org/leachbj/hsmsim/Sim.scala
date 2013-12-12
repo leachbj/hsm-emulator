@@ -24,7 +24,7 @@ package org.leachbj.hsmsim
 import _root_.akka.Main
 
 /**
- * Simple [[App]] version fo the simulator.
+ * Simple [[App]] version of the simulator.
  */
 object Sim extends App {
   Main.main(Array("org.leachbj.hsmsim.akka.HsmSimulator"))
