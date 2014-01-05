@@ -157,11 +157,11 @@ class RequestProcessor(init: Init[WithinActorContext, HsmResponse, HsmRequest]) 
     case generateRsa: GenerateRSAKeySetRequest =>
       sender ! init.Command(GenerateRSAKeySetResponse.createResponse(generateRsa))
     case unknown: UnknownHsmRequest =>
-      println("Unknown command type " + unknown.cmd)
+      log.error("Unknown command type {}", unknown.cmd)
       val responseCode = "" + unknown.cmd.charAt(0) + (unknown.cmd.charAt(1) + 1)
       sender ! init.Command(ErrorResponse(responseCode, "99"))
     case _ =>
-      println("Unhandled message!")
+      log.error("Unhandled message!")
   }
 }
 
