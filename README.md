@@ -5,11 +5,17 @@ that interacts with a HSM.
 
 ## Quick start
 
-The simulator runs as a java process
+The simulator runs as a java process.
 
-  java -jar hsmsim.jar
+Apache Maven is required to compile the code for this project.
 
-Alternatively the simulator can be deployed as a web application, deploy the hsmsim-war.war to a suitable
+### Compile
+  `mvn package`
+
+### Run the packaged jar
+  `java -jar target/hsmsim-akka/hsmsim.jar`
+
+Alternatively the simulator can be deployed as a web application, deploy the target/hsmsim-war/hsmsim.war file to a suitable
 servlet container.
 
 ## Contributing
