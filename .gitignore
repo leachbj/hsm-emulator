@@ -7,3 +7,5 @@ target/
 *.iws
 .DS_Store
 .cache
+.vscode
+hsmsim-akka/bin/
